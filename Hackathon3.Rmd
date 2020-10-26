@@ -1,0 +1,53 @@
+---
+title: "Hackathon3"
+author: "Xiyun Zhang"
+date: "10/26/2020"
+output: html_document
+---
+#PArt I
+```{r}
+library(devtools)
+library(tidyr)
+library(dplyr)
+
+DF1 <- read.csv("engagement-data.csv")
+DF2 <- read.csv("student-level.csv")
+DF1.1 <- DF1 %>% group_by(id, week) %>% summarise(average= mean(measure))
+DF1.2 <- spread(DF1.1,week,average)
+colnames(DF1.2) <- c("id","week1","week2","week3","week4","week5","week6")
+DF1.3 <- DF1.2 %>% ungroup() %>% select(2:7)
+DF1.3$engage_average <- rowMeans(DF1.3)
+DF1.2$engage_average <- DF1.3$engage_average
+
+DF3 <- merge(DF1.2,DF2,by="id")
+DF3$assignment_average <- rowMeans(subset(DF3, select= 9:13))
+DF3$quiz_average <- rowMeans(subset(DF3, select= 14:18))
+
+```
+#Part II
+```{r}
+DF3.1 <- select(DF3,2:19)
+DF3.2 <- select(DF3, 8,19,24,25)
+pairs(DF3.2)
+
+```
+#Part III
+```{r}
+library(cluster)
+fit <- kmeans(DF3.2, 2)
+clusplot(DF3.2, fit$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
+ 
+fit2 <- kmeans(DF3.2, 3)
+clusplot(DF3.2, fit2$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
+
+fit3 <- kmeans(DF3.2, 4)
+clusplot(DF3.2, fit3$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
+
+fit4 <- kmeans(DF3.2, 5)
+clusplot(DF3.2, fit4$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
+
+fit5 <- kmeans(DF3.2, 6)
+clusplot(DF3.2, fit5$cluster, color=TRUE, shade=TRUE,labels=2, lines=0)
+
+```
+
